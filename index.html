@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>凌龙 · Unity 开发 / 三维美术</title>
+<meta name="description" content="凌龙，虚拟现实技术应用专业在读，Unity 开发与三维美术方向。Blender 建模、PBR 材质、Unity 场景搭建与 LOD 性能优化。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="凌龙 · Unity 开发 / 三维美术">
+<meta property="og:description" content="把场景做出来，也把帧率保住。Unity 开发 / 三维美术求职简历与作品经历。">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#E9E7E1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23E9E7E1'/%3E%3Cg fill='none' stroke='%2315507A' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M16 5 27 11v10L16 27 5 21V11z'/%3E%3Cpath d='M16 5v22M5 11l11 6 11-6'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+/* ================= tokens ================= */
+:root{
+  --paper:#E9E7E1;
+  --surface:#F5F3EE;
+  --ink:#14181A;
+  --ink-2:#4C524F;
+  --muted:#7A7F7B;
+  --line:#C7C3B8;
+  --line-2:#D9D5CA;
+  --accent:#15507A;
+  --accent-2:#2B6E9C;
+  --accent-wash:#DCE4EA;
+  --max:1200px;
+  --rail:152px;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Microsoft YaHei","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono","JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(rgba(20,24,26,.055) 1px,transparent 1px);
+  background-size:26px 26px;
+  background-position:-1px -1px;
+}
+h1,h2,h3,h4{margin:0;font-weight:600;line-height:1.2}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+::selection{background:var(--accent);color:var(--surface)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.wrap{width:min(100% - 48px,var(--max));margin-inline:auto}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+
+/* ================= top bar ================= */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(233,231,225,.92);
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{display:flex;align-items:center;justify-content:space-between;height:60px;gap:24px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand-name{font-size:15px;font-weight:600;letter-spacing:.04em}
+.brand-role{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.nav{display:flex;align-items:center;gap:2px}
+.nav a{
+  position:relative;font-size:13px;color:var(--ink-2);padding:8px 11px;
+  border-radius:2px;transition:color .18s ease;
+}
+.nav a::after{
+  content:"";position:absolute;left:11px;right:11px;bottom:3px;height:1px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .22s ease;
+}
+.nav a:hover{color:var(--ink)}
+.nav a.is-active{color:var(--accent)}
+.nav a.is-active::after{transform:scaleX(1)}
+.topbar-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);padding:7px 0 7px 14px;border-left:1px solid var(--line);
+}
+.topbar-cta:hover{color:var(--accent-2)}
+
+/* ================= hero ================= */
+.hero{padding:clamp(38px,6vw,78px) 0 clamp(30px,4vw,52px)}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(28px,4vw,64px);align-items:end}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.hero-eyebrow .dash{width:34px;height:1px;background:var(--ink);opacity:.5}
+.hero-name{
+  font-size:clamp(64px,12vw,140px);
+  font-weight:700;letter-spacing:.02em;line-height:.86;
+  margin-left:-.06em;
+}
+.hero-line{
+  margin-top:20px;font-size:clamp(19px,2.4vw,25px);line-height:1.5;
+  font-weight:500;letter-spacing:.01em;max-width:34em;text-wrap:balance;
+}
+.hero-line em{font-style:normal;color:var(--accent);border-bottom:1px solid var(--accent-wash)}
+.hero-desc{
+  margin-top:16px;color:var(--ink-2);font-size:14.5px;line-height:1.9;
+  max-width:38em;text-wrap:pretty;
+}
+.hero-meta{
+  display:grid;grid-template-columns:repeat(4,auto);justify-content:start;
+  gap:0 0;margin-top:30px;border-top:1px solid var(--line);padding-top:14px;
+  max-width:38em;
+}
+.hero-meta div{padding-right:26px;margin-right:26px;border-right:1px solid var(--line-2)}
+.hero-meta div:last-child{border-right:0;margin-right:0;padding-right:0}
+.hero-meta dt{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.hero-meta dd{margin:5px 0 0;font-size:14px;font-weight:500}
+
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 18px;
+  border:1px solid var(--ink);font-size:13.5px;letter-spacing:.02em;
+  transition:background .18s ease,color .18s ease,border-color .18s ease;
+}
+.btn-primary{background:var(--ink);color:var(--surface)}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent)}
+.btn-ghost{border-color:var(--line);color:var(--ink-2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn svg{width:15px;height:15px;flex:none}
+
+/* ---------- viewport panel ---------- */
+.viewport{
+  position:relative;aspect-ratio:1/1;background:var(--surface);
+  border:1px solid var(--line);overflow:hidden;
+  background-image:linear-gradient(to right,rgba(20,24,26,.045) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(20,24,26,.045) 1px,transparent 1px);
+  background-size:38px 38px;background-position:center center;
+}
+.viewport::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 58%,rgba(43,110,156,.09),transparent 62%);
+}
+#meshCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+#meshCanvas:active{cursor:grabbing}
+.vp-bar{
+  position:absolute;top:0;left:0;right:0;z-index:2;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:11px 14px;border-bottom:1px solid var(--line-2);
+  background:linear-gradient(to bottom,rgba(245,243,238,.9),rgba(245,243,238,.55));
+  pointer-events:none;
+}
+.vp-tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-2);text-transform:uppercase}
+.vp-hud{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--accent);white-space:nowrap}
+.vp-foot{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px 12px;border-top:1px solid var(--line-2);
+  background:linear-gradient(to top,rgba(245,243,238,.94),rgba(245,243,238,.5));
+}
+.lod{display:flex;align-items:center;gap:2px}
+.lod-btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  padding:7px 10px;border:1px solid transparent;color:var(--muted);
+  transition:color .16s ease,background .16s ease,border-color .16s ease;
+}
+.lod-btn:hover{color:var(--ink)}
+.lod-btn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.vp-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--muted)}
+.vp-corner{position:absolute;width:9px;height:9px;border:1px solid var(--accent);opacity:.55;z-index:1}
+.vp-corner.a{top:7px;left:7px;border-right:0;border-bottom:0}
+.vp-corner.b{top:7px;right:7px;border-left:0;border-bottom:0}
+.vp-corner.c{bottom:7px;left:7px;border-right:0;border-top:0}
+.vp-corner.d{bottom:7px;right:7px;border-left:0;border-top:0}
+
+/* ---------- stat strip ---------- */
+.figures{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.figures-in{display:grid;grid-template-columns:repeat(4,1fr)}
+.fig{padding:22px 0 22px 22px;border-left:1px solid var(--line-2)}
+.fig:first-child{border-left:0;padding-left:0}
+.fig-num{font-family:var(--mono);font-size:26px;letter-spacing:-.01em;color:var(--ink);line-height:1.1}
+.fig-lab{margin-top:6px;font-size:13.5px;color:var(--ink-2);line-height:1.6;max-width:17em}
+
+/* ================= sections ================= */
+.sec{padding:clamp(52px,7vw,88px) 0;border-bottom:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:var(--rail) 1fr;gap:0 clamp(16px,3vw,40px);align-items:start;margin-bottom:clamp(26px,3vw,42px)}
+.sec-index{display:flex;flex-direction:column;gap:6px}
+.sec-index .n{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent)}
+.sec-index .t{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.sec-title{font-size:clamp(24px,3.2vw,34px);letter-spacing:.01em;text-wrap:balance}
+.sec-lede{margin-top:12px;color:var(--ink-2);font-size:14.5px;line-height:1.9;max-width:40em;text-wrap:pretty}
+
+/* ---------- about / capability ---------- */
+.about-grid{display:grid;grid-template-columns:var(--rail) 1fr;gap:0 clamp(16px,3vw,40px)}
+.about-body{max-width:40em}
+.about-body p{font-size:15px;line-height:1.95;color:var(--ink-2);text-wrap:pretty}
+.about-body p + p{margin-top:16px}
+.about-body strong{color:var(--ink);font-weight:600}
+.pull{
+  margin-top:26px;padding:16px 18px;border-left:2px solid var(--accent);
+  background:linear-gradient(to right,rgba(43,110,156,.07),transparent 85%);
+  font-size:15px;line-height:1.85;color:var(--ink);
+}
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:32px}
+.cap{background:var(--surface);padding:24px 22px 26px}
+.cap-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line-2)}
+.cap-h h3{font-size:15.5px;letter-spacing:.03em}
+.cap-h span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent)}
+.cap ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:11px}
+.cap li{font-size:14px;line-height:1.7;color:var(--ink-2);padding-left:14px;position:relative}
+.cap li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:1px;background:var(--accent);opacity:.7}
+.cap li b{display:block;color:var(--ink);font-weight:600;font-size:14px}
+.cap li i{display:block;margin-top:1px;font-style:normal;color:var(--muted);font-size:12.5px}
+
+/* ---------- timeline ---------- */
+.tl{--t-time:106px;--t-axis:26px;position:relative}
+.tl-row{display:grid;grid-template-columns:var(--t-time) var(--t-axis) 1fr;margin-bottom:clamp(26px,3vw,38px)}
+.tl-row:last-child{margin-bottom:0}
+.tl-axis{position:absolute;top:8px;bottom:8px;width:1px;background:var(--line);left:calc(var(--t-time) + var(--t-axis) / 2);transform:translateX(-.5px)}
+.tl-time{font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--muted);padding-top:3px;text-align:left}
+.tl-dot-col{display:flex;justify-content:center}
+.tl-dot{width:9px;height:9px;background:var(--surface);border:1px solid var(--accent);margin-top:6px;position:relative;z-index:1}
+.tl-row.is-key .tl-dot{background:var(--accent);border-color:var(--accent)}
+.tl-body{padding-bottom:2px}
+.tl-role{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+.tl-role h3{font-size:16.5px;letter-spacing:.01em}
+.tl-org{font-size:13px;color:var(--ink-2)}
+.tl-tag{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--accent-wash);padding:2px 6px;background:rgba(43,110,156,.06);
+}
+.tl-body ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px;max-width:44em}
+.tl-body li{position:relative;padding-left:15px;font-size:14px;line-height:1.85;color:var(--ink-2);text-wrap:pretty}
+.tl-body li::before{content:"";position:absolute;left:0;top:.72em;width:5px;height:1px;background:var(--line)}
+.tl-body li strong{color:var(--ink);font-weight:600}
+
+/* ---------- education ---------- */
+.edu{border-top:1px solid var(--line-2);display:grid;grid-template-columns:1fr;gap:0}
+.edu-row{display:grid;grid-template-columns:var(--rail) 1fr;gap:0 clamp(16px,3vw,40px);padding:24px 0;border-bottom:1px solid var(--line-2)}
+.edu-row:last-child{border-bottom:0}
+.edu-row .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding-top:4px}
+.edu-row .v h3{font-size:15.5px}
+.edu-row .v span{font-size:13px;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12.5px;color:var(--ink-2);border:1px solid var(--line);padding:3px 9px;background:rgba(255,255,255,.35)}
+.edu-sum{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;margin-bottom:18px}
+.edu-sum .big{font-size:clamp(20px,2.6vw,26px);font-weight:600;letter-spacing:.01em}
+.edu-sum .sm{font-size:13.5px;color:var(--ink-2)}
+
+/* ---------- contact ---------- */
+.contact-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(26px,4vw,56px);align-items:start}
+.contact-title{font-size:clamp(26px,3.6vw,38px);letter-spacing:.01em;line-height:1.25;text-wrap:balance}
+.contact-note{margin-top:14px;color:var(--ink-2);font-size:14.5px;line-height:1.9;max-width:34em;text-wrap:pretty}
+.contact-list{margin-top:26px;border-top:1px solid var(--line)}
+.c-row{
+  display:grid;grid-template-columns:88px 1fr auto;align-items:center;gap:14px;
+  padding:14px 0;border-bottom:1px solid var(--line-2);
+}
+.c-row .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.c-row .v{font-size:14.5px;letter-spacing:.02em}
+.c-row .v a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.copy{
+  display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.08em;color:var(--muted);padding:9px 10px;border:1px solid var(--line);
+  transition:color .16s,border-color .16s,background .16s;
+}
+.copy:hover{color:var(--accent);border-color:var(--accent);background:rgba(43,110,156,.05)}
+.copy svg{width:12px;height:12px}
+.contact-side{background:var(--surface);border:1px solid var(--line);padding:clamp(20px,2.6vw,30px)}
+.side-h{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;padding-bottom:12px;border-bottom:1px solid var(--line-2)}
+.side-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:14px}
+.side-list li{font-size:13.5px;line-height:1.75;color:var(--ink-2)}
+.side-list b{display:block;color:var(--ink);font-weight:600;font-size:13.5px}
+.side-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line-2)}
+.side-foot a{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--accent)}
+.side-foot a:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- footer ---------- */
+.foot{padding:26px 0 34px}
+.foot-in{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.foot .mono{font-size:10px}
+.to-top{display:inline-flex;align-items:center;gap:7px;min-height:44px;font-size:12px;color:var(--ink-2)}
+.to-top:hover{color:var(--accent)}
+.to-top svg{width:13px;height:13px}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translate(-50%,14px);
+  background:var(--ink);color:var(--surface);font-size:13px;letter-spacing:.02em;
+  padding:9px 16px;border-radius:2px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease;z-index:80;
+}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.reveal.is-in{opacity:1;transform:none}
+
+/* ================= responsive ================= */
+@media (max-width:1040px){
+  .hero-grid{grid-template-columns:1fr;align-items:start;gap:36px}
+  .viewport{max-width:560px;width:100%}
+  .cap-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+}
+@media (max-width:860px){
+  .nav a:nth-child(1){display:none}
+  .figures-in{grid-template-columns:repeat(2,1fr)}
+  .fig:nth-child(3){border-left:0;padding-left:0}
+  .fig:nth-child(n+3){border-top:1px solid var(--line-2);margin-top:0}
+}
+@media (max-width:720px){
+  .wrap{width:min(100% - 32px,var(--max))}
+  .sec-head,.about-grid,.edu-row{grid-template-columns:1fr;gap:10px}
+  .sec-index{flex-direction:row;align-items:baseline;gap:10px}
+  .hero-meta{grid-template-columns:repeat(2,auto);border-top:1px solid var(--line);padding-top:16px;row-gap:14px}
+  .hero-meta div:nth-child(2){border-right:0;margin-right:0;padding-right:0}
+  .hero-meta div:nth-child(3){padding-left:0}
+  .tl{--t-time:0px;--t-axis:24px}
+  .tl-row{grid-template-columns:var(--t-axis) 1fr;row-gap:2px}
+  .tl-dot-col{grid-column:1;grid-row:1 / span 2}
+  .tl-dot{margin-top:6px}
+  .tl-time{grid-column:2;grid-row:1;font-size:11px;padding-top:0;margin-bottom:3px}
+  .tl-body{grid-column:2;grid-row:2}
+  .nav a{display:inline-flex;align-items:center;min-height:44px}
+  .tl-body li{font-size:14px}
+  .c-row{grid-template-columns:72px 1fr;gap:8px 12px}
+  .c-row .copy{grid-column:2;justify-self:start;margin-top:2px}
+  .topbar-cta{display:none}
+}
+@media (max-width:480px){
+  .hero-name{font-size:clamp(58px,20vw,84px)}
+  .fig-num{font-size:22px}
+  .fig-lab{font-size:12.5px}
+  .nav{gap:0}
+  .nav a{padding:8px 8px;font-size:12.5px}
+  .thead{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+}
+@media print{
+  body{background:#fff;background-image:none}
+  .topbar,.viewport,.hero-actions,.foot,.contact-side{display:none}
+  .sec{border-color:#bbb}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 顶栏 ================= -->
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">
+      <span class="brand-name">凌龙</span>
+      <span class="brand-role">Unity / 3D</span>
+    </div>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#about" data-nav="about">简介</a>
+      <a href="#skills" data-nav="skills">能力</a>
+      <a href="#experience" data-nav="experience">经历</a>
+      <a href="#education" data-nav="education">教育</a>
+      <a href="#contact" data-nav="contact">联系</a>
+    </nav>
+    <a class="topbar-cta" href="#contact">可实习 · 随时联系</a>
+  </div>
+</header>
+
+<main id="top">
+<!-- ===== hero ===== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">
+          <span class="dash"></span>
+          <span class="mono">个人简历 · 2026</span>
+        </div>
+        <h1 class="hero-name">凌龙</h1>
+        <p class="hero-line">Unity 开发 / 三维美术<br>把场景做出来，也把<em>帧率</em>保住。</p>
+        <p class="hero-desc">虚拟现实技术应用专业在读，2027 年 7 月毕业。从 Blender 建模、PBR 材质，到 Unity 场景搭建、灯光后处理与 LOD 优化，两年里一直在同一条资产管线上来回。</p>
+
+        <dl class="hero-meta">
+          <div><dt>现居</dt><dd>四川 · 成都</dd></div>
+          <div><dt>学历</dt><dd>大专在读</dd></div>
+          <div><dt>出生</dt><dd>2006.08</dd></div>
+          <div><dt>状态</dt><dd>可实习</dd></div>
+        </dl>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#experience">查看经历<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a class="btn btn-ghost" href="#contact">联系方式</a>
+        </div>
+      </div>
+
+      <div class="viewport" aria-label="三维网格演示，可拖拽旋转并切换 LOD 层级">
+        <span class="vp-corner a"></span><span class="vp-corner b"></span>
+        <span class="vp-corner c"></span><span class="vp-corner d"></span>
+        <div class="vp-bar">
+          <span class="vp-tag">Asset / Faceted Sphere</span>
+          <span class="vp-hud" id="hudStat">VERTS 162 / TRIS 320</span>
+        </div>
+        <canvas id="meshCanvas"></canvas>
+        <div class="vp-foot">
+          <div class="lod" role="group" aria-label="细节层级切换">
+            <button class="lod-btn" data-lod="0" aria-pressed="true">LOD 0</button>
+            <button class="lod-btn" data-lod="1" aria-pressed="false">LOD 1</button>
+            <button class="lod-btn" data-lod="2" aria-pressed="false">LOD 2</button>
+          </div>
+          <span class="vp-hint">拖拽旋转</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== figures ===== -->
+<section class="figures">
+  <div class="wrap figures-in">
+    <div class="fig reveal">
+      <div class="fig-num">03</div>
+      <div class="fig-lab">国家级荣誉 · 创新创业竞赛项目</div>
+    </div>
+    <div class="fig reveal">
+      <div class="fig-num">02</div>
+      <div class="fig-lab">段实习 · XR 内容制作与引擎实训</div>
+    </div>
+    <div class="fig reveal">
+      <div class="fig-num">06</div>
+      <div class="fig-lab">门专业课 · 引擎 / 三维 / 实训三条线</div>
+    </div>
+    <div class="fig reveal">
+      <div class="fig-num">2027.07</div>
+      <div class="fig-lab">预计毕业 · 成都职业技术学院</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== about ===== -->
+<section class="sec" id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-index"><span class="n">01</span><span class="t">About</span></div>
+      <div>
+        <h2 class="sec-title">会做模型，也懂引擎的脾气</h2>
+        <p class="sec-lede">求职意向：Unity 开发工程师 / 3D 建模师。优先考虑 3D 建模、Unity 开发助理类岗位。</p>
+      </div>
+    </div>
+
+    <div class="about-grid">
+      <div></div>
+      <div class="about-body">
+        <p>我是凌龙，成都职业技术学院<strong>虚拟现实技术应用</strong>专业在读，2027 年 7 月毕业。方向很明确：把三维资产做出来，并且让它在引擎里跑得动。</p>
+        <p>两年里我一直在同一条管线上来回：Blender 建模、拓扑展 UV、PBR 材质渲染；模型进 Unity 之后，是资源导入与规整、场景搭建、灯光与后处理、面数精简与 LOD。XR 项目里这套流程被压得更紧——VR 设备不给你试错空间，帧率掉了就是掉了。</p>
+        <p>竞赛团队里我做三维美术负责人，从场景道具到路演素材都由我产出；实训和实习里我配合开发做打包、测试与资源归档。我习惯按规范命名、分级归档，因为下一个接手的人不一定是我。</p>
+        <div class="pull">建模是加法，优化是减法。两者要在同一份资产里同时成立。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== skills ===== -->
+<section class="sec" id="skills">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-index"><span class="n">02</span><span class="t">Capabilities</span></div>
+      <div>
+        <h2 class="sec-title">能力清单：引擎、资产、管线</h2>
+        <p class="sec-lede">下面三项不是自评分数，是可交付的内容——每一条都对应课程、实训或实习里实际做过的事。</p>
+      </div>
+    </div>
+
+    <div class="cap-grid">
+      <article class="cap reveal">
+        <div class="cap-h"><h3>引擎与开发</h3><span>Engine</span></div>
+        <ul>
+          <li><b>Unity 引擎</b>场景搭建、UI 与动画、项目打包与性能调优<i>课程与实训持续使用</i></li>
+          <li><b>C# 程序基础</b>面向对象语法、脚本挂载、基础交互逻辑调试<i>可读写并调试现有脚本</i></li>
+          <li><b>XR 内容</b>VR / AR 项目流程、设备端实时渲染适配<i>课程实训与 XR 实习</i></li>
+        </ul>
+      </article>
+
+      <article class="cap reveal">
+        <div class="cap-h"><h3>三维资产</h3><span>3D Asset</span></div>
+        <ul>
+          <li><b>Blender 建模</b>场景与道具建模、拓扑、UV 展开<i>独立完成整包美术资源</i></li>
+          <li><b>PBR 材质</b>材质节点、贴图制作、渲染出图<i>产出效果图与路演素材</i></li>
+          <li><b>减面与 LOD</b>面数精简、多级细节、实时帧率保障<i>面向 VR 与实时渲染</i></li>
+        </ul>
+      </article>
+
+      <article class="cap reveal">
+        <div class="cap-h"><h3>管线与交付</h3><span>Pipeline</span></div>
+        <ul>
+          <li><b>资源规整</b>命名规范、分类归档、工程结构维护<i>配合小组交接</i></li>
+          <li><b>场景与光影</b>Unity 场景组装、灯光布置、后处理调试<i>视觉效果的最终把关</i></li>
+          <li><b>交付素材</b>渲染图、漫游与演示视频、实训 Demo<i>可独立输出</i></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== experience ===== -->
+<section class="sec" id="experience">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-index"><span class="n">03</span><span class="t">Experience</span></div>
+      <div>
+        <h2 class="sec-title">从校内实训到 XR 项目现场</h2>
+        <p class="sec-lede">四段经历共用一套方法：先建模，再进引擎，然后把面数和资源收拾干净。</p>
+      </div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-axis" aria-hidden="true"></div>
+
+      <div class="tl-row is-key">
+        <div class="tl-time">2024.09 &mdash; 至今</div>
+        <div class="tl-dot-col"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <div class="tl-role"><h3>班级副班长</h3><span class="tl-org">成都职业技术学院</span></div>
+          <ul>
+            <li>统筹班级日常事务，对接任课教师，组织专业实训与作品分享活动。</li>
+            <li>协调小组分工、跟进项目进度，减少信息往返，提升团队协作效率。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-row">
+        <div class="tl-time">2025.03 &mdash; 至今</div>
+        <div class="tl-dot-col"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <div class="tl-role"><h3>三维美术负责人</h3><span class="tl-org">创新创业竞赛团队</span><span class="tl-tag">国家级 3 项</span></div>
+          <ul>
+            <li>独立负责参赛项目全部三维美术板块：Blender 场景与道具建模、PBR 材质制作与渲染出图。</li>
+            <li>在 Unity 内完成场景搭建、光影调试与模型面数优化，保障实时运行性能。</li>
+            <li>产出 3D 效果图与漫游演示视频，作为路演核心可视化素材，支撑项目申报与现场答辩。</li>
+            <li>项目累计获多项省级荣誉，并三次取得国家级荣誉。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-row">
+        <div class="tl-time">2025.07 &mdash; 2025.09</div>
+        <div class="tl-dot-col"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <div class="tl-role"><h3>XR 内容制作实习生</h3><span class="tl-org">奇遇科技有限公司</span></div>
+          <ul>
+            <li>独立使用 Blender 完成场景、道具建模，拓扑展 UV 与 PBR 材质渲染。</li>
+            <li>在 Unity 中完成场景组装、灯光调试与资源规整；对模型做面数精简与 LOD 优化，适配 VR 设备实时渲染要求。</li>
+            <li>配合开发人员完成项目打包与功能测试，输出演示视频与项目交付素材。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-row">
+        <div class="tl-time">2025.11 &mdash; 2026.01</div>
+        <div class="tl-dot-col"><span class="tl-dot"></span></div>
+        <div class="tl-body">
+          <div class="tl-role"><h3>三维美术 & 引擎实训实习生</h3><span class="tl-org">成都职业技术学院校内实训</span></div>
+          <ul>
+            <li>参与游戏引擎项目实训开发，负责项目三维建模与美术资源产出。</li>
+            <li>用 Blender 完成场景与道具模型搭建、拓扑 UV、PBR 材质渲染；在 Unity 内导入资源、搭建场景、布置光照与后处理，调试场景视觉效果。</li>
+            <li>对模型资源做轻量化与 LOD 优化，保障引擎内实时渲染帧率；配合小组完成基础交互逻辑调试与资源分类归档，输出渲染效果图与实训 Demo。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== education ===== -->
+<section class="sec" id="education">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-index"><span class="n">04</span><span class="t">Education</span></div>
+      <div>
+        <h2 class="sec-title">课程结构：一半是引擎，一半是美术</h2>
+        <p class="sec-lede">课程按三条线展开，正好对应上面三项能力。</p>
+      </div>
+    </div>
+
+    <div class="edu-sum">
+      <span class="big">成都职业技术学院 · 虚拟现实技术应用</span>
+      <span class="sm">2024.09 &mdash; 2027.07</span>
+    </div>
+
+    <div class="edu">
+      <div class="edu-row">
+        <div class="k">Engine</div>
+        <div class="v">
+          <h3>引擎开发课程</h3>
+          <div class="chips"><span class="chip">C# 程序设计</span><span class="chip">Unity XR 开发</span><span class="chip">虚幻引擎蓝图开发</span></div>
+        </div>
+      </div>
+      <div class="edu-row">
+        <div class="k">3D Art</div>
+        <div class="v">
+          <h3>三维美术课程</h3>
+          <div class="chips"><span class="chip">三维模型制作</span><span class="chip">UV 与材质渲染</span><span class="chip">粒子特效制作</span><span class="chip">Blender 建模</span></div>
+        </div>
+      </div>
+      <div class="edu-row">
+        <div class="k">Practice</div>
+        <div class="v">
+          <h3>综合实训课程</h3>
+          <div class="chips"><span class="chip">VR 项目综合实训</span><span class="chip">AR 应用开发实训</span><span class="chip">虚拟场景部署调试</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ===== contact ===== -->
+<section class="sec" id="contact" style="border-bottom:0">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <h2 class="contact-title">聊岗位，或者聊一个模型该怎么减面。</h2>
+        <p class="contact-note">现居成都，可到岗实习。优先考虑 3D 建模、Unity 开发助理类岗位，XR 内容制作与引擎美术方向的实习机会同样欢迎。</p>
+
+        <div class="contact-list">
+          <div class="c-row">
+            <span class="k">Email</span>
+            <span class="v"><a href="mailto:3492286993@qq.com">3492286993@qq.com</a></span>
+            <button class="copy" data-copy="3492286993@qq.com" aria-label="复制邮箱"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15 5H6a1 1 0 0 0-1 1v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>复制</button>
+          </div>
+          <div class="c-row">
+            <span class="k">Phone</span>
+            <span class="v"><a href="tel:15183736762">151 8373 6762</a></span>
+            <button class="copy" data-copy="15183736762" aria-label="复制手机号"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15 5H6a1 1 0 0 0-1 1v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>复制</button>
+          </div>
+          <div class="c-row">
+            <span class="k">WeChat</span>
+            <span class="v">15183736762</span>
+            <button class="copy" data-copy="15183736762" aria-label="复制微信号"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15 5H6a1 1 0 0 0-1 1v9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>复制</button>
+          </div>
+          <div class="c-row">
+            <span class="k">City</span>
+            <span class="v">四川省 成都市</span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="contact-side">
+        <div class="side-h">一页读完</div>
+        <ul class="side-list">
+          <li><b>求职意向</b>Unity 开发工程师 / 3D 建模师</li>
+          <li><b>优先岗位</b>3D 建模、Unity 开发助理（可实习）</li>
+          <li><b>教育状态</b>2024.09 — 2027.07，虚拟现实技术应用</li>
+          <li><b>可交付</b>三维资产、引擎内场景、渲染图与演示视频</li>
+        </ul>
+        <div class="side-foot">
+          <a href="assets/resume-linglong.pdf" download>
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            下载原始简历（PDF）
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span class="mono">© 2026 凌龙 · 静态页面，可直接部署于 GitHub Pages</span>
+    <a class="to-top" href="#top">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6m0 0-5 5m5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      回到顶部
+    </a>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- 1. viewport mesh ---------- */
+  var canvas = document.getElementById('meshCanvas');
+  var hud = document.getElementById('hudStat');
+
+  function makeMesh(level) {
+    var t = (1 + Math.sqrt(5)) / 2;
+    var verts = [[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0], [0, -1, t], [0, 1, t],
+                 [0, -1, -t], [0, 1, -t], [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]];
+    var faces = [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9],
+                 [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8], [3, 9, 4], [3, 4, 2],
+                 [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10],
+                 [8, 6, 7], [9, 8, 1]];
+
+    function norm(p) {
+      var l = Math.sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+      return [p[0] / l, p[1] / l, p[2] / l];
+    }
+    function shape(p) {
+      var r = 1 + 0.06 * Math.sin(2.6 * p[0] + 0.7) * Math.cos(3.1 * p[1] + 1.3)
+                + 0.035 * Math.sin(4.2 * p[2] + 2.1);
+      return [p[0] * r, p[1] * r, p[2] * r];
+    }
+
+    var v = verts.map(function (p) { return shape(norm(p)); });
+    var f = faces.slice();
+    for (var s = 0; s < level; s++) {
+      var cache = {};
+      var next = [];
+      (function () {
+        v = v.slice();
+      })();
+      var mid = function (a, b) {
+        var k = a < b ? a + '_' + b : b + '_' + a;
+        if (cache[k] !== undefined) return cache[k];
+        var m = norm([(v[a][0] + v[b][0]) / 2, (v[a][1] + v[b][1]) / 2, (v[a][2] + v[b][2]) / 2]);
+        v.push(shape(m));
+        cache[k] = v.length - 1;
+        return cache[k];
+      };
+      for (var i = 0; i < f.length; i++) {
+        var A = f[i][0], B = f[i][1], C = f[i][2];
+        var ab = mid(A, B), bc = mid(B, C), ca = mid(C, A);
+        next.push([A, ab, ca], [B, bc, ab], [C, ca, bc], [ab, bc, ca]);
+      }
+      f = next;
+    }
+    return { v: v, f: f };
+  }
+
+  if (canvas) {
+    var ctx = canvas.getContext('2d');
+    var W = 0, H = 0, DPR = 1;
+    var mesh = makeMesh(2);
+    var rotX = -0.32, rotY = 0.6, spin = 0.0034;
+    var velY = 0, dragging = false, lastX = 0, lastY = 0, pointerId = null;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var LIGHT = (function () {
+      var d = [-0.42, 0.66, 0.62];
+      var l = Math.sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+      return [d[0] / l, d[1] / l, d[2] / l];
+    })();
+
+    function resize() {
+      var r = canvas.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(r.width * DPR);
+      canvas.height = Math.round(r.height * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      W = r.width; H = r.height;
+      draw();
+    }
+
+    function rot(p) {
+      var cy = Math.cos(rotY), sy = Math.sin(rotY);
+      var x = p[0] * cy + p[2] * sy;
+      var z0 = -p[0] * sy + p[2] * cy;
+      var cx = Math.cos(rotX), sx = Math.sin(rotX);
+      var y = p[1] * cx - z0 * sx;
+      var z = p[1] * sx + z0 * cx;
+      return [x, y, z];
+    }
+
+    function draw() {
+      if (!W || !H) return;
+      ctx.clearRect(0, 0, W, H);
+      var cx = W / 2, cy = H / 2;
+      var D = 3.6, focal = 2.0, S = Math.min(W, H) * 0.68;
+      var rv = mesh.v;
+
+      var pts = [], i, n = rv.length;
+      for (i = 0; i < n; i++) {
+        var p = rot(rv[i]);
+        var depth = D - p[2];
+        if (depth < 0.3) depth = 0.3;
+        var k = focal / depth * S;
+        pts.push([cx + p[0] * k, cy - p[1] * k, p[2]]);
+      }
+
+      var order = [];
+      for (i = 0; i < mesh.f.length; i++) {
+        var a = mesh.f[i][0], b = mesh.f[i][1], c = mesh.f[i][2];
+        var pa = pts[a], pb = pts[b], pc = pts[c];
+        var ux = pb[0] - pa[0], uy = pb[1] - pa[1];
+        var vx = pc[0] - pa[0], vy = pc[1] - pa[1];
+        var cross = ux * vy - uy * vx;
+        if (cross <= 0) continue;
+        order.push({ i: i, z: (pa[2] + pb[2] + pc[2]) / 3, a: a, b: b, c: c });
+      }
+      order.sort(function (m, n2) { return m.z - n2.z; });
+
+      for (i = 0; i < order.length; i++) {
+        var o = order[i];
+        var P = [pts[o.a], pts[o.b], pts[o.c]];
+        var e1 = [rv[o.b][0] - rv[o.a][0], rv[o.b][1] - rv[o.a][1], rv[o.b][2] - rv[o.a][2]];
+        var e2 = [rv[o.c][0] - rv[o.a][0], rv[o.c][1] - rv[o.a][1], rv[o.c][2] - rv[o.a][2]];
+        var nv = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+        var nl = Math.sqrt(nv[0] * nv[0] + nv[1] * nv[1] + nv[2] * nv[2]) || 1;
+        var nrm = rot([nv[0] / nl, nv[1] / nl, nv[2] / nl]);
+        var lam = Math.max(0, nrm[0] * LIGHT[0] + nrm[1] * LIGHT[1] + nrm[2] * LIGHT[2]);
+        var tone = Math.pow(lam, 0.85);
+        var L = 29 + 61 * tone;
+        ctx.fillStyle = 'hsl(203 11% ' + L.toFixed(1) + '%)';
+        ctx.beginPath();
+        ctx.moveTo(P[0][0], P[0][1]);
+        ctx.lineTo(P[1][0], P[1][1]);
+        ctx.lineTo(P[2][0], P[2][1]);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(21,80,122,' + (0.18 + 0.46 * tone).toFixed(2) + ')';
+        ctx.lineWidth = 0.85;
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(21,80,122,0.55)';
+      ctx.beginPath();
+      ctx.arc(cx + 4, cy + H * 0.40, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function loop() {
+      if (!dragging) {
+        rotY += spin + velY;
+        velY *= 0.94;
+        if (Math.abs(velY) < 0.0002) velY = 0;
+      }
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+      dragging = true; pointerId = e.pointerId;
+      lastX = e.clientX; lastY = e.clientY; velY = 0;
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - lastX, dy = e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY;
+      rotY += dx * 0.0085;
+      rotX = Math.max(-1.15, Math.min(1.15, rotX + dy * 0.007));
+      velY = dx * 0.0012;
+      draw();
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      canvas.style.cursor = 'grab';
+    }
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+
+    var lodBtns = document.querySelectorAll('.lod-btn');
+    var levels = [2, 1, 0];
+    lodBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-lod'), 10);
+        mesh = makeMesh(levels[idx]);
+        lodBtns.forEach(function (b) {
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+        if (hud) hud.textContent = 'VERTS ' + mesh.v.length + ' / TRIS ' + mesh.f.length;
+        draw();
+      });
+    });
+
+    if (hud) hud.textContent = 'VERTS ' + mesh.v.length + ' / TRIS ' + mesh.f.length;
+
+    if (window.ResizeObserver) {
+      new ResizeObserver(resize).observe(canvas);
+    } else {
+      window.addEventListener('resize', resize);
+    }
+    resize();
+    if (!reduced) requestAnimationFrame(loop);
+  }
+
+  /* ---------- 2. reveal ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var ro = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('is-in');
+          ro.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function (el) { ro.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-in'); });
+  }
+
+  /* ---------- 3. nav active ---------- */
+  var navLinks = document.querySelectorAll('.nav a[data-nav]');
+  var sections = ['about', 'skills', 'experience', 'education', 'contact']
+    .map(function (id) { return document.getElementById(id); })
+    .filter(Boolean);
+
+  if ('IntersectionObserver' in window && sections.length) {
+    var no = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          navLinks.forEach(function (a) {
+            a.classList.toggle('is-active', a.getAttribute('data-nav') === en.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    sections.forEach(function (s) { no.observe(s); });
+  }
+
+  /* ---------- 4. copy + toast ---------- */
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('is-on'); }, 1800);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        resolve();
+      } catch (err) { reject(err); }
+    });
+  }
+
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var val = btn.getAttribute('data-copy') || '';
+      copyText(val).then(function () {
+        showToast('已复制：' + val);
+      }).catch(function () {
+        showToast('复制失败，请手动选择文本');
+      });
+    });
+  });
+
+  /* ---------- 5. first-paint reveal for figures ---------- */
+  window.addEventListener('load', function () {
+    revealEls.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) el.classList.add('is-in');
+    });
+    resizeSafe();
+  });
+
+  function resizeSafe() {
+    if (canvas) {
+      var ev = document.createEvent('Event');
+      ev.initEvent('resize', true, true);
+      window.dispatchEvent(ev);
+    }
+  }
+})();
+
+</script>
+</body>
+</html>
